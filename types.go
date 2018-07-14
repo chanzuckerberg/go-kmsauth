@@ -104,7 +104,29 @@ type Token struct {
 	NotAfter  TokenTime `json:"not_after,omitempty"`
 }
 
+// NewToken generates a new token
+func NewToken(tokenLifetime time.Duration) *Token {
+	now := time.Now()
+	// Start the notBefore x time in the past to avoid clock skew
+	notBefore := now.Add(-1 * timeSkew)
+	// Set the notAfter x time in the future but account for timeSkew
+	notAfter := now.Add(tokenLifetime - timeSkew)
+	return &Token{
+		NotBefore: TokenTime(notBefore),
+		NotAfter:  TokenTime(notAfter),
+	}
+}
+
 // ------------- EncryptedToken --------------
 
 // EncryptedToken is a b64 kms encrypted token
 type EncryptedToken string
+
+// ------------- TokenCache --------------
+
+// TokenCache is a cached token, consists of a token and an encryptedToken
+type TokenCache struct {
+	Token
+	EncryptedToken EncryptedToken     `json:"token,omitempty"`
+	AuthContext    map[string]*string `json:"auth_context,omitempty"`
+}
