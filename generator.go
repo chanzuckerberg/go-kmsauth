@@ -81,7 +81,7 @@ func (tg *TokenGenerator) getCachedToken() (*Token, error) {
 	}
 	now := time.Now()
 	// subtract timeSkew to account for clock skew
-	notAfter := time.Time(tokenCache.Token.NotAfter).Add(-1 * timeSkew)
+	notAfter := tokenCache.Token.NotAfter.Add(-1 * timeSkew)
 	if now.Before(notAfter) {
 		// token is still valid, use it
 		return &tokenCache.Token, nil

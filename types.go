@@ -79,22 +79,25 @@ func (ac *AuthContextV2) GetKMSContext() map[string]*string {
 // ------------- Token --------------
 
 // TokenTime is a custom time formatter
-type TokenTime time.Time
+type TokenTime struct {
+	time.Time
+}
 
 // MarshalJSON marshals into json
-func (t TokenTime) MarshalJSON() ([]byte, error) {
-	return []byte(time.Time(t).Format(timeFormat)), nil
+func (t *TokenTime) MarshalJSON() ([]byte, error) {
+	formatted := t.Time.Format(TimeFormat)
+	return []byte(formatted), nil
 }
 
 // UnmarshalJSON unmarshals
-func (t TokenTime) UnmarshalJSON(b []byte) error {
+func (t *TokenTime) UnmarshalJSON(b []byte) error {
 	s := string(b)
 	s = strings.Trim(s, "\"")
-	parsed, err := time.Parse(timeFormat, s)
+	parsed, err := time.Parse(TimeFormat, s)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Could not parse time %s", s))
 	}
-	t = TokenTime(parsed)
+	t = &TokenTime{Time: parsed}
 	return nil
 }
 
@@ -112,8 +115,8 @@ func NewToken(tokenLifetime time.Duration) *Token {
 	// Set the notAfter x time in the future but account for timeSkew
 	notAfter := now.Add(tokenLifetime - timeSkew)
 	return &Token{
-		NotBefore: TokenTime(notBefore),
-		NotAfter:  TokenTime(notAfter),
+		NotBefore: TokenTime{notBefore},
+		NotAfter:  TokenTime{notAfter},
 	}
 }
 
@@ -126,7 +129,7 @@ type EncryptedToken string
 
 // TokenCache is a cached token, consists of a token and an encryptedToken
 type TokenCache struct {
-	Token
-	EncryptedToken EncryptedToken     `json:"token,omitempty"`
+	Token          Token              `json:"token,omitempty"`
+	EncryptedToken EncryptedToken     `json:"encrypted_token,omitempty"`
 	AuthContext    map[string]*string `json:"auth_context,omitempty"`
 }
