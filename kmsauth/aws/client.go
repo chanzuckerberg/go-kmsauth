@@ -1,9 +1,9 @@
 package aws
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // Client is an AWS client
@@ -12,24 +12,14 @@ type Client struct {
 }
 
 // NewClient returns a new aws client
-func NewClient(d *schema.ResourceData) (*Client, error) {
-	regionOverride := d.Get("region").(string)
-	var region *string
-	if regionOverride != "" {
-		region = aws.String(regionOverride)
+func NewClient(sess *session.Session) (*Client, error) {
+	var err error
+	if sess == nil {
+		log.Debug("nil aws.Session provided, attempting to create one")
+		sess, err = session.NewSession()
+		if err != nil {
+			return nil, errors.Wrap(err, "Could not create aws session")
+		}
 	}
-	sess := session.Must(session.NewSessionWithOptions(
-		session.Options{
-			Config: aws.Config{
-				Region: region,
-			},
-			SharedConfigState: session.SharedConfigEnable,
-			Profile:           d.Get("profile").(string),
-		},
-	))
-	client := &Client{
-		KMS: NewKMS(sess),
-	}
-
-	return client, nil
+	return &Client{KMS: NewKMS(sess)}, nil
 }

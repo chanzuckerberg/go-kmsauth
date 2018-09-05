@@ -29,3 +29,18 @@ func (k *KMS) EncryptBytes(keyID string, plaintext []byte, context map[string]*s
 	}
 	return base64.StdEncoding.EncodeToString(response.CiphertextBlob), nil
 }
+
+// Decrypt decrypts a b64 string
+func (k *KMS) Decrypt(ciphertext []byte, context map[string]*string) ([]byte, string, error) {
+
+	input := &kms.DecryptInput{}
+	input.SetCiphertextBlob(ciphertext).SetEncryptionContext(context)
+	response, err := k.Svc.Decrypt(input)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "KMS decryption failed")
+	}
+	if response.KeyId == nil {
+		return nil, "", errors.New("Nil KMS keyID returned from AWS")
+	}
+	return response.Plaintext, *response.KeyId, nil
+}

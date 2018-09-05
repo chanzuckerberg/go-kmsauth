@@ -18,16 +18,40 @@ import (
 // TokenGenerator generates a token
 type TokenGenerator struct {
 	// AuthKey the key_arn or alias to use for authentication
-	AuthKey        string
-	Region         string
-	TokenVersion   TokenVersion
-	TokenLifetime  time.Duration
+	AuthKey string
+	// TokenVersion is a kmsauth token version
+	TokenVersion TokenVersion
+	// The token lifetime
+	TokenLifetime time.Duration
+	// A file to use as a cache
 	TokenCacheFile *string
-	AuthContext    AuthContext
+	// An auth context
+	AuthContext AuthContext
 
+	// AwsClient for kms encryption
 	AwsClient *aws.Client
-
+	// rw mutex
 	mutex sync.RWMutex
+}
+
+// NewTokenGenerator returns a new token generator
+func NewTokenGenerator(
+	authKey string,
+	tokenVersion TokenVersion,
+	awsClient *aws.Client,
+	tokenLifetime time.Duration,
+	tokenCacheFile *string,
+	authContext AuthContext,
+) *TokenGenerator {
+	return &TokenGenerator{
+		AuthKey:        authKey,
+		TokenVersion:   tokenVersion,
+		TokenLifetime:  tokenLifetime,
+		TokenCacheFile: tokenCacheFile,
+		AuthContext:    authContext,
+
+		AwsClient: awsClient,
+	}
 }
 
 // Validate validates the TokenGenerator

@@ -105,6 +105,19 @@ type Token struct {
 	NotAfter  TokenTime `json:"not_after,omitempty"`
 }
 
+// IsValid returns an error if token is invalid, nil if valid
+func (t *Token) IsValid(tokenLifetime time.Duration) error {
+	now := time.Now()
+	delta := t.NotAfter.Sub(t.NotBefore.Time)
+	if delta > tokenLifetime {
+		return errors.New("Token issued for longer than Tokenlifetime")
+	}
+	if now.Before(t.NotBefore.Time) || now.After(t.NotAfter.Time) {
+		return errors.New("Invalid time validity for token")
+	}
+	return nil
+}
+
 // NewToken generates a new token
 func NewToken(tokenLifetime time.Duration) *Token {
 	now := time.Now()
