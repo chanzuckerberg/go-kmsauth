@@ -21,6 +21,21 @@ type TokenValidator struct {
 	AwsClient *aws.Client
 }
 
+// NewTokenValidator returns a new token validator
+func NewTokenValidator(
+	authKeys map[string]bool,
+	awsClient *aws.Client,
+	authContext AuthContext,
+	tokenLifetime time.Duration,
+) *TokenValidator {
+	return &TokenValidator{
+		AuthKeys:      authKeys,
+		AuthContext:   authContext,
+		TokenLifetime: tokenLifetime,
+		AwsClient:     awsClient,
+	}
+}
+
 // validate validates the token validator
 func (tv *TokenValidator) validate() error {
 	if tv == nil {
@@ -53,7 +68,6 @@ func (tv *TokenValidator) decryptToken(tokenb64 string) (*Token, error) {
 	if !ok {
 		return nil, errors.Errorf("Invalid KMS key used %s", keyID)
 	}
-
 	token := &Token{}
 	err = json.Unmarshal(plaintext, token)
 	return token, errors.Wrap(err, "Could not unmarshal token from plaintext")
