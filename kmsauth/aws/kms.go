@@ -24,6 +24,8 @@ func (k *KMS) EncryptBytes(keyID string, plaintext []byte, context map[string]*s
 	input := &kms.EncryptInput{}
 	input.SetKeyId(keyID).SetPlaintext(plaintext).SetEncryptionContext(context)
 	response, err := k.Svc.Encrypt(input)
-	return base64.StdEncoding.EncodeToString(response.CiphertextBlob),
-		errors.Wrap(err, "KMS encryption failed")
+	if err != nil {
+		return "", errors.Wrap(err, "KMS encryption failed")
+	}
+	return base64.StdEncoding.EncodeToString(response.CiphertextBlob), nil
 }

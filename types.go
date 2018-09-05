@@ -2,7 +2,6 @@ package kmsauth
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -92,12 +91,11 @@ func (t *TokenTime) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals
 func (t *TokenTime) UnmarshalJSON(b []byte) error {
 	s := string(b)
-	s = strings.Trim(s, "\"")
 	parsed, err := time.Parse(TimeFormat, s)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Could not parse time %s", s))
 	}
-	t = &TokenTime{Time: parsed}
+	t = &TokenTime{parsed}
 	return nil
 }
 

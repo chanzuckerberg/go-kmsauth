@@ -2,11 +2,11 @@ package kmsauth_test
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 	"time"
 
 	kmsauth "github.com/chanzuckerberg/go-kmsauth"
-	"github.com/chanzuckerberg/go-kmsauth/kmsauth/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -55,7 +55,7 @@ func TestAuthContextGetKSMContext(t *testing.T) {
 		"from": &foo,
 		"to":   &bar,
 	}
-	a.True(util.StrPtrMapEqual(ac.GetKMSContext(), expected))
+	a.True(reflect.DeepEqual(ac.GetKMSContext(), expected))
 
 	ac2 := kmsauth.AuthContextV2{From: foo, To: bar, UserType: baz}
 	expected = map[string]*string{
@@ -63,7 +63,7 @@ func TestAuthContextGetKSMContext(t *testing.T) {
 		"to":   &bar,
 		"user": &baz,
 	}
-	a.True(util.StrPtrMapEqual(ac2.GetKMSContext(), expected))
+	a.True(reflect.DeepEqual(ac2.GetKMSContext(), expected))
 }
 
 func TestTokenTimeMarshal(t *testing.T) {
