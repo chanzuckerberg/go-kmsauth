@@ -63,7 +63,6 @@ func (tv *TokenValidator) decryptToken(tokenb64 string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	ok, _ := tv.AuthKeys[keyID]
 	if !ok {
 		return nil, errors.Errorf("Invalid KMS key used %s", keyID)
