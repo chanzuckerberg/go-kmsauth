@@ -85,7 +85,8 @@ type TokenTime struct {
 // MarshalJSON marshals into json
 func (t *TokenTime) MarshalJSON() ([]byte, error) {
 	formatted := t.Time.Format(TimeFormat)
-	return []byte(formatted), nil
+	stamp := fmt.Sprintf("\"%s\"", formatted)
+	return []byte(stamp), nil
 }
 
 // UnmarshalJSON unmarshals
