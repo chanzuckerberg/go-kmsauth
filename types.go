@@ -69,9 +69,9 @@ func (ac *AuthContextV2) GetUsername() string {
 // GetKMSContext gets the kms context
 func (ac *AuthContextV2) GetKMSContext() map[string]*string {
 	return map[string]*string{
-		"from": &ac.From,
-		"to":   &ac.To,
-		"user": &ac.UserType,
+		"from":      &ac.From,
+		"to":        &ac.To,
+		"user_type": &ac.UserType,
 	}
 }
 
