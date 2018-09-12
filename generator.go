@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/chanzuckerberg/go-kmsauth/kmsauth/aws"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -38,7 +39,7 @@ type TokenGenerator struct {
 func NewTokenGenerator(
 	authKey string,
 	tokenVersion TokenVersion,
-	awsClient *aws.Client,
+	sess *session.Session,
 	tokenLifetime time.Duration,
 	tokenCacheFile *string,
 	authContext AuthContext,
@@ -50,7 +51,7 @@ func NewTokenGenerator(
 		TokenCacheFile: tokenCacheFile,
 		AuthContext:    authContext,
 
-		AwsClient: awsClient,
+		AwsClient: aws.NewClient(sess),
 	}
 }
 

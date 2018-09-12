@@ -32,7 +32,6 @@ func (k *KMS) EncryptBytes(keyID string, plaintext []byte, context map[string]*s
 
 // Decrypt decrypts a b64 string
 func (k *KMS) Decrypt(ciphertext []byte, context map[string]*string) ([]byte, string, error) {
-
 	input := &kms.DecryptInput{}
 	input.SetCiphertextBlob(ciphertext).SetEncryptionContext(context)
 	response, err := k.Svc.Decrypt(input)

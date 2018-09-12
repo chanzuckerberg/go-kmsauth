@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/chanzuckerberg/go-kmsauth/kmsauth/aws"
 	"github.com/pkg/errors"
 )
@@ -24,7 +25,7 @@ type TokenValidator struct {
 // NewTokenValidator returns a new token validator
 func NewTokenValidator(
 	authKeys map[string]bool,
-	awsClient *aws.Client,
+	sess *session.Session,
 	authContext AuthContext,
 	tokenLifetime time.Duration,
 ) *TokenValidator {
@@ -32,7 +33,7 @@ func NewTokenValidator(
 		AuthKeys:      authKeys,
 		AuthContext:   authContext,
 		TokenLifetime: tokenLifetime,
-		AwsClient:     awsClient,
+		AwsClient:     aws.NewClient(sess),
 	}
 }
 
