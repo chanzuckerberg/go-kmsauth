@@ -2,7 +2,6 @@ module github.com/chanzuckerberg/go-kmsauth
 
 require (
 	github.com/aws/aws-sdk-go v1.15.35
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-ini/ini v1.38.2 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
