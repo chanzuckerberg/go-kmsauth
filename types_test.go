@@ -59,9 +59,9 @@ func TestAuthContextGetKSMContext(t *testing.T) {
 
 	ac2 := kmsauth.AuthContextV2{From: foo, To: bar, UserType: baz}
 	expected = map[string]*string{
-		"from": &foo,
-		"to":   &bar,
-		"user": &baz,
+		"from":      &foo,
+		"to":        &bar,
+		"user_type": &baz,
 	}
 	a.True(reflect.DeepEqual(ac2.GetKMSContext(), expected))
 }
