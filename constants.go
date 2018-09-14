@@ -6,7 +6,7 @@ import (
 
 const (
 	//TimeFormat the time format for kmsauth tokens
-	TimeFormat = time.RFC3339
+	TimeFormat = "%Y%m%dT%H%M%SZ"
 	// timeSkew how much to compensate for time skew
 	timeSkew = time.Duration(3) * time.Minute
 )
