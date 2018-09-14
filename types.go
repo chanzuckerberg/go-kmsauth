@@ -142,6 +142,11 @@ func NewToken(tokenLifetime time.Duration) *Token {
 // EncryptedToken is a b64 kms encrypted token
 type EncryptedToken string
 
+//  String satisfies the stringer interface
+func (e EncryptedToken) String() string {
+	return string(e)
+}
+
 // ------------- TokenCache --------------
 
 // TokenCache is a cached token, consists of a token and an encryptedToken
