@@ -105,25 +105,20 @@ func (t *TokenTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Payload is the kmsauth payload
-type Payload struct {
-	NotBefore TokenTime `json:"not_before"`
-	NotAfter  TokenTime `json:"not_after"`
-}
-
 // Token is a kmsauth token
 type Token struct {
-	Payload Payload `json:"payload"`
+	NotBefore TokenTime `json:"not_before"`
+	NotAfter  TokenTime `json:"not_after"`
 }
 
 // IsValid returns an error if token is invalid, nil if valid
 func (t *Token) IsValid(tokenLifetime time.Duration) error {
 	now := time.Now()
-	delta := t.Payload.NotAfter.Sub(t.Payload.NotBefore.Time)
+	delta := t.NotAfter.Sub(t.NotBefore.Time)
 	if delta > tokenLifetime {
 		return errors.New("Token issued for longer than Tokenlifetime")
 	}
-	if now.Before(t.Payload.NotBefore.Time) || now.After(t.Payload.NotAfter.Time) {
+	if now.Before(t.NotBefore.Time) || now.After(t.NotAfter.Time) {
 		return errors.New("Invalid time validity for token")
 	}
 	return nil
@@ -137,10 +132,8 @@ func NewToken(tokenLifetime time.Duration) *Token {
 	// Set the notAfter x time in the future but account for timeSkew
 	notAfter := now.Add(tokenLifetime - timeSkew)
 	return &Token{
-		Payload{
-			NotBefore: TokenTime{notBefore},
-			NotAfter:  TokenTime{notAfter},
-		},
+		NotBefore: TokenTime{notBefore},
+		NotAfter:  TokenTime{notAfter},
 	}
 }
 

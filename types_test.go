@@ -74,9 +74,7 @@ func TestTokenTimeMarshal(t *testing.T) {
 
 	tc := kmsauth.TokenCache{
 		Token: kmsauth.Token{
-			Payload: kmsauth.Payload{
-				NotBefore: kmsauth.TokenTime{Time: tiempo},
-			},
+			NotBefore: kmsauth.TokenTime{Time: tiempo},
 		},
 	}
 
@@ -91,11 +89,11 @@ func TestNewToken(t *testing.T) {
 	// Correctly accounts for skew
 	token := kmsauth.NewToken(0 * time.Minute)
 	a.NotNil(token)
-	a.Equal(token.Payload.NotAfter, token.Payload.NotBefore)
+	a.Equal(token.NotAfter, token.NotBefore)
 
 	// Goes to the future
 	token = kmsauth.NewToken(100 * time.Minute)
 	a.NotNil(token)
-	a.True(token.Payload.NotAfter.After(time.Now()))
+	a.True(token.NotAfter.After(time.Now()))
 
 }
