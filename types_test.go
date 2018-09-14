@@ -78,7 +78,7 @@ func TestTokenTimeMarshal(t *testing.T) {
 
 	b, err := json.Marshal(tc)
 	a.Nil(err)
-	a.Equal("{\"token\":{\"payload\":{\"not_before\":\"0001-01-01T00:01:00Z\",\"not_after\":\"0001-01-01T00:00:00Z\"}}}", string(b))
+	a.Equal(string(b), "{\"token\":{\"not_before\":\"0001-01-01T00:01:00Z\",\"not_after\":\"0001-01-01T00:00:00Z\"}}")
 }
 
 func TestNewToken(t *testing.T) {
