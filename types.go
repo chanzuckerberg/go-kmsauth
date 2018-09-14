@@ -107,8 +107,8 @@ func (t *TokenTime) UnmarshalJSON(b []byte) error {
 
 // Token is a kmsauth token
 type Token struct {
-	NotBefore TokenTime `json:"not_before,omitempty"`
-	NotAfter  TokenTime `json:"not_after,omitempty"`
+	NotBefore TokenTime `json:"not_before"`
+	NotAfter  TokenTime `json:"not_after"`
 }
 
 // IsValid returns an error if token is invalid, nil if valid
