@@ -59,9 +59,9 @@ func TestAuthContextGetKSMContext(t *testing.T) {
 
 	ac2 := kmsauth.AuthContextV2{From: foo, To: bar, UserType: baz}
 	expected = map[string]*string{
-		"from": &foo,
-		"to":   &bar,
-		"user": &baz,
+		"from":      &foo,
+		"to":        &bar,
+		"user_type": &baz,
 	}
 	a.True(reflect.DeepEqual(ac2.GetKMSContext(), expected))
 }
@@ -73,7 +73,9 @@ func TestTokenTimeMarshal(t *testing.T) {
 	tiempo = tiempo.Add(1 * time.Minute)
 
 	tc := kmsauth.TokenCache{
-		Token: kmsauth.Token{NotBefore: kmsauth.TokenTime{Time: tiempo}},
+		Token: kmsauth.Token{
+			NotBefore: kmsauth.TokenTime{Time: tiempo},
+		},
 	}
 
 	b, err := json.Marshal(tc)

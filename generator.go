@@ -10,7 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chanzuckerberg/go-kmsauth/kmsauth/aws"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	cziAWS "github.com/chanzuckerberg/go-kmsauth/kmsauth/aws"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,7 +31,7 @@ type TokenGenerator struct {
 	AuthContext AuthContext
 
 	// AwsClient for kms encryption
-	AwsClient *aws.Client
+	AwsClient *cziAWS.Client
 	// rw mutex
 	mutex sync.RWMutex
 }
@@ -38,7 +40,8 @@ type TokenGenerator struct {
 func NewTokenGenerator(
 	authKey string,
 	tokenVersion TokenVersion,
-	awsClient *aws.Client,
+	sess *session.Session,
+	conf *aws.Config,
 	tokenLifetime time.Duration,
 	tokenCacheFile *string,
 	authContext AuthContext,
@@ -50,7 +53,7 @@ func NewTokenGenerator(
 		TokenCacheFile: tokenCacheFile,
 		AuthContext:    authContext,
 
-		AwsClient: awsClient,
+		AwsClient: cziAWS.NewClient(sess, conf),
 	}
 }
 
@@ -130,8 +133,8 @@ func (tg *TokenGenerator) cacheToken(tokenCache *TokenCache) error {
 	return errors.Wrap(err, "Could not write token to cache")
 }
 
-// GetToken gets a token
-func (tg *TokenGenerator) GetToken() (*Token, error) {
+// getToken gets a token
+func (tg *TokenGenerator) getToken() (*Token, error) {
 	token, err := tg.getCachedToken()
 	if err != nil {
 		return nil, err
@@ -145,7 +148,7 @@ func (tg *TokenGenerator) GetToken() (*Token, error) {
 
 // GetEncryptedToken returns the encrypted kmsauth token
 func (tg *TokenGenerator) GetEncryptedToken() (*EncryptedToken, error) {
-	token, err := tg.GetToken()
+	token, err := tg.getToken()
 	if err != nil {
 		return nil, err
 	}
@@ -155,11 +158,27 @@ func (tg *TokenGenerator) GetEncryptedToken() (*EncryptedToken, error) {
 		return nil, errors.Wrap(err, "Could not marshal token")
 	}
 
+	log.Warnf("Token: %s", string(tokenBytes))
+
 	encryptedStr, err := tg.AwsClient.KMS.EncryptBytes(
 		tg.AuthKey,
 		tokenBytes,
 		tg.AuthContext.GetKMSContext())
 
+	if err != nil {
+		return nil, err
+	}
+
 	encryptedToken := EncryptedToken(encryptedStr)
+
+	tokenCache := &TokenCache{
+		Token:          *token,
+		EncryptedToken: encryptedToken,
+		AuthContext:    tg.AuthContext.GetKMSContext(),
+	}
+	err = tg.cacheToken(tokenCache)
+	if err != nil {
+		return nil, err
+	}
 	return &encryptedToken, err
 }

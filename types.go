@@ -2,6 +2,7 @@ package kmsauth
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -19,8 +20,8 @@ type AuthContext interface {
 
 // AuthContextV1 is a kms encryption context used to ascertain a user's identiy
 type AuthContextV1 struct {
-	From string `json:"from,omitempty" validate:"required"`
-	To   string `json:"to,omitempty" validate:"required"`
+	From string `json:"from" validate:"required"`
+	To   string `json:"to" validate:"required"`
 }
 
 // Validate validates
@@ -47,9 +48,9 @@ func (ac *AuthContextV1) GetKMSContext() map[string]*string {
 
 // AuthContextV2 is a kms encryption context used to ascertain a user's identiy
 type AuthContextV2 struct {
-	From     string `json:"from,omitempty" validate:"required"`
-	To       string `json:"to,omitempty" validate:"required"`
-	UserType string `json:"user_type,omitempty" validate:"required"`
+	From     string `json:"from" validate:"required"`
+	To       string `json:"to" validate:"required"`
+	UserType string `json:"user_type" validate:"required"`
 }
 
 // Validate validates
@@ -68,11 +69,13 @@ func (ac *AuthContextV2) GetUsername() string {
 
 // GetKMSContext gets the kms context
 func (ac *AuthContextV2) GetKMSContext() map[string]*string {
-	return map[string]*string{
-		"from": &ac.From,
-		"to":   &ac.To,
-		"user": &ac.UserType,
+	context := map[string]*string{
+		"from":      &ac.From,
+		"to":        &ac.To,
+		"user_type": &ac.UserType,
 	}
+
+	return context
 }
 
 // ------------- Token --------------
@@ -85,12 +88,15 @@ type TokenTime struct {
 // MarshalJSON marshals into json
 func (t *TokenTime) MarshalJSON() ([]byte, error) {
 	formatted := t.Time.Format(TimeFormat)
-	return []byte(formatted), nil
+	stamp := fmt.Sprintf("\"%s\"", formatted)
+	return []byte(stamp), nil
 }
 
 // UnmarshalJSON unmarshals
 func (t *TokenTime) UnmarshalJSON(b []byte) error {
 	s := string(b)
+	// Unmarshal gives us back a string that looks like "<some_time>". Get rid of the quotes
+	s = strings.Trim(s, "\"")
 	parsed, err := time.Parse(TimeFormat, s)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Could not parse time %s", s))
@@ -101,8 +107,8 @@ func (t *TokenTime) UnmarshalJSON(b []byte) error {
 
 // Token is a kmsauth token
 type Token struct {
-	NotBefore TokenTime `json:"not_before,omitempty"`
-	NotAfter  TokenTime `json:"not_after,omitempty"`
+	NotBefore TokenTime `json:"not_before"`
+	NotAfter  TokenTime `json:"not_after"`
 }
 
 // IsValid returns an error if token is invalid, nil if valid
@@ -135,6 +141,11 @@ func NewToken(tokenLifetime time.Duration) *Token {
 
 // EncryptedToken is a b64 kms encrypted token
 type EncryptedToken string
+
+//  String satisfies the stringer interface
+func (e EncryptedToken) String() string {
+	return string(e)
+}
 
 // ------------- TokenCache --------------
 

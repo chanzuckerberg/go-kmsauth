@@ -3,6 +3,7 @@ package aws
 import (
 	"encoding/base64"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
@@ -15,8 +16,8 @@ type KMS struct {
 }
 
 // NewKMS returns a KMS client
-func NewKMS(s *session.Session) KMS {
-	return KMS{kms.New(s)}
+func NewKMS(s *session.Session, conf *aws.Config) KMS {
+	return KMS{kms.New(s, conf)}
 }
 
 // EncryptBytes encrypts the plaintext using the keyID key and the given context, result is base64 encoded
@@ -32,7 +33,6 @@ func (k *KMS) EncryptBytes(keyID string, plaintext []byte, context map[string]*s
 
 // Decrypt decrypts a b64 string
 func (k *KMS) Decrypt(ciphertext []byte, context map[string]*string) ([]byte, string, error) {
-
 	input := &kms.DecryptInput{}
 	input.SetCiphertextBlob(ciphertext).SetEncryptionContext(context)
 	response, err := k.Svc.Decrypt(input)
