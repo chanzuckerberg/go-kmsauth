@@ -7,7 +7,7 @@ import (
 const (
 	//TimeFormat the time format for kmsauth tokens
 	// TimeFormat  = "%Y%m%dT%H%M%SZ"
-	TimeFormat = "20060102T150405Z"
+	TimeFormat = "20060102T150405Z UTC"
 	// Mon Jan 2 15:04:05 MST 2006
 	// timeSkew how much to compensate for time skew
 	timeSkew = time.Duration(3) * time.Minute
