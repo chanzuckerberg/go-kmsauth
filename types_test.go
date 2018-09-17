@@ -94,6 +94,6 @@ func TestNewToken(t *testing.T) {
 	// Goes to the future
 	token = kmsauth.NewToken(100 * time.Minute)
 	a.NotNil(token)
-	a.True(token.NotAfter.After(time.Now()))
+	a.True(token.NotAfter.After(time.Now().UTC()))
 
 }
