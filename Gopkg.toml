@@ -1,9 +1,5 @@
 [[constraint]]
-  name = "github.com/aws/aws-sdk-go"
-  version = "1.15.36"
-
-[[constraint]]
-  branch = "edu/initial"
+  branch = "master"
   name = "github.com/chanzuckerberg/go-misc"
 
 [[constraint]]
