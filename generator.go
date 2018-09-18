@@ -10,9 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	cziAWS "github.com/chanzuckerberg/go-kmsauth/kmsauth/aws"
+	cziAWS "github.com/chanzuckerberg/go-misc/aws"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,7 +29,7 @@ type TokenGenerator struct {
 	AuthContext AuthContext
 
 	// AwsClient for kms encryption
-	AwsClient *cziAWS.Client
+	awsClient *cziAWS.Client
 	// rw mutex
 	mutex sync.RWMutex
 }
@@ -40,11 +38,10 @@ type TokenGenerator struct {
 func NewTokenGenerator(
 	authKey string,
 	tokenVersion TokenVersion,
-	sess *session.Session,
-	conf *aws.Config,
 	tokenLifetime time.Duration,
 	tokenCacheFile *string,
 	authContext AuthContext,
+	awsClient *cziAWS.Client,
 ) *TokenGenerator {
 	return &TokenGenerator{
 		AuthKey:        authKey,
@@ -53,7 +50,7 @@ func NewTokenGenerator(
 		TokenCacheFile: tokenCacheFile,
 		AuthContext:    authContext,
 
-		AwsClient: cziAWS.NewClient(sess, conf),
+		awsClient: awsClient,
 	}
 }
 
@@ -160,7 +157,7 @@ func (tg *TokenGenerator) GetEncryptedToken() (*EncryptedToken, error) {
 
 	log.Warnf("Token: %s", string(tokenBytes))
 
-	encryptedStr, err := tg.AwsClient.KMS.EncryptBytes(
+	encryptedStr, err := tg.awsClient.KMS.EncryptBytes(
 		tg.AuthKey,
 		tokenBytes,
 		tg.AuthContext.GetKMSContext())
