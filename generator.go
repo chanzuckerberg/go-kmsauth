@@ -65,7 +65,7 @@ func (tg *TokenGenerator) Validate() error {
 // getCachedToken tries to fetch a token from the cache
 func (tg *TokenGenerator) getCachedToken() (*Token, error) {
 	if tg.TokenCacheFile == nil {
-		log.Warn("No TokenCacheFile specified")
+		log.Debug("No TokenCacheFile specified")
 		return nil, nil
 	}
 	// lock for reading
@@ -154,8 +154,6 @@ func (tg *TokenGenerator) GetEncryptedToken() (*EncryptedToken, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Could not marshal token")
 	}
-
-	log.Warnf("Token: %s", string(tokenBytes))
 
 	encryptedStr, err := tg.awsClient.KMS.EncryptBytes(
 		tg.AuthKey,
