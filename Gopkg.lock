@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:ecc1f0675a6f2782a68ddded9a7f3c0ddc39c38074fcab9e9ee3992a45313377"
+  digest = "1:3ddf26c53cbf5d3f4de82f9c82d75e99247881863e9b489225c6ce3e069227be"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -48,6 +48,8 @@
     "service/lambda/lambdaiface",
     "service/s3",
     "service/s3/s3iface",
+    "service/secretsmanager",
+    "service/secretsmanager/secretsmanageriface",
     "service/sts",
     "service/sts/stsiface",
   ]
@@ -57,11 +59,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8c7c01c627f48355552e75369926bae615cdaa659aab85023612116f60ea4619"
+  digest = "1:89778389889b26adf5bf4b7f2504f9bc0b7bf517b843ac967bcbe4aea694c69f"
   name = "github.com/chanzuckerberg/go-misc"
   packages = ["aws"]
   pruneopts = "UT"
-  revision = "fff4f5944f96378315187fa77fe94340d9ebdfb7"
+  revision = "92a1d644d70db434c55463f9276ebc5756d01622"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
