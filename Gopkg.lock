@@ -168,12 +168,12 @@
   revision = "f02c79500a9c629cd7cf2f3abadbbf2f5a9161d3"
 
 [[projects]]
-  digest = "1:e2f64cca6e235f32cd4c2f9be9ae0cda1f8608fc6fdb68936e8d10e4e0bb074d"
+  digest = "1:e8f2c13faf20d6bd2edce6956422f11eb251e766e0884c95645fbb5fd7b6b831"
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e69e9a28bb62b977fdc58d051f1bb477b7cbe486"
-  version = "v9.21.0"
+  revision = "3be31424000e9263ddc36f27b1de4c18f657f02e"
+  version = "v9.22.0"
 
 [solve-meta]
   analyzer-name = "dep"
